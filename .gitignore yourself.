@@ -1,0 +1,13 @@
+# Ignore Everything:
+*
+
+# Except code, project files and paper:
+!master.sh
+!Project.toml
+!Manifest.toml
+!*.jl
+!paper.tex
+!*/
+
+# Ignore Jupyter notebook checkpoints, if any:
+.ipynb_checkpoints
