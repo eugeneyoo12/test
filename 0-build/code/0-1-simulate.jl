@@ -53,7 +53,7 @@ function profit(own_p::Float64, other_p::Float64; α=α, δ=δ, ξ=ξ, c=c, t=1,
    return N * shares(p, t=t, α=α, δ=δ, ξ=ξ)[j] * (own_p - c[t, j])
 end
 
-function eq_prices_BR(; α=α, δ=δ, ξ=ξ, c=c, tol = 1e-20, max_iter = 10000)
+function eq_prices_FOC(; α=α, δ=δ, ξ=ξ, c=c, tol = 1e-20, max_iter = 10000)
     
     p = zeros(Float64, T, J)
     
@@ -104,6 +104,13 @@ function main(out_path)
     df = DataFrame(t = 1:T, p1 = p[:, 1], p2 = p[:, 2], s1 = s[:, 1], s2 = s[:, 2], c1 = c[:, 1], c2 = c[:, 2])
 
     CSV.write(out_path * "/raw.csv", df)
+end
+
+FOC(p::Matrix{Float64}; α=α, δ=δ, ξ=ξ) = c::Matrix{Float64} .+ 1.0 ./ (α .* (1.0 .- shares(p, α=α, δ=δ, ξ=ξ)))
+
+function eq_prices_FOC(; α=α, δ=δ, ξ=ξ)
+    res = fixedpoint(x -> FOC(x, α=α, δ=δ, ξ=ξ), ones(Float64, T, J))
+    return res.zero
 end
 
 main(out_path)
